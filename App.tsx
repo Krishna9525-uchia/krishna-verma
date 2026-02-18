@@ -12,6 +12,8 @@ const SearchIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentCol
 const MenuIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>;
 const ArrowRightIcon = () => <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>;
 const HomeIcon = () => <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>;
+const CopyIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>;
+const CheckIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
 
 // --- Components ---
 
@@ -111,8 +113,10 @@ const Header: React.FC<{ darkMode: boolean, setDarkMode: (v: boolean) => void }>
               </div>
             </button>
             <button 
-              className="md:hidden p-2 text-slate-600 dark:text-slate-300"
+              className="md:hidden p-2 text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-lg"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Close Menu" : "Open Menu"}
+              aria-expanded={mobileMenuOpen}
             >
               <MenuIcon />
             </button>
@@ -294,9 +298,14 @@ const HomePage: React.FC = () => {
                       className="w-full py-5 px-4 text-lg text-slate-900 dark:text-white bg-transparent border-none focus:ring-0 placeholder-slate-400"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      aria-label="Search calculators"
                     />
                     {search && (
-                      <button onClick={() => setSearch('')} className="pr-6 text-slate-400 hover:text-slate-600">
+                      <button
+                        onClick={() => setSearch('')}
+                        className="pr-6 text-slate-400 hover:text-slate-600 transition-colors"
+                        aria-label="Clear search"
+                      >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
                     )}
@@ -578,6 +587,7 @@ const CalculatorDetail: React.FC = () => {
   const [results, setResults] = useState<any[]>([]);
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
 
   useEffect(() => {
     if (calculator) {
@@ -638,6 +648,12 @@ const CalculatorDetail: React.FC = () => {
     setLoadingAi(false);
   }
 
+  const handleCopy = (text: string, index: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(index);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
   if (!calculator) return <div className="min-h-screen pt-24 text-center dark:text-white">Calculator not found.</div>;
 
   return (
@@ -693,10 +709,11 @@ const CalculatorDetail: React.FC = () => {
              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                {calculator.inputs.map(inp => (
                  <div key={inp.name} className={inp.type === 'select' || calculator.inputs.length < 3 ? "col-span-full" : "col-span-1"}>
-                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
+                   <label htmlFor={`input-${inp.name}`} className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
                    <div className="relative group">
                       {inp.type === 'select' ? (
                         <select 
+                          id={`input-${inp.name}`}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
                           onChange={(e) => handleInputChange(inp.name, e.target.value)}
@@ -705,6 +722,7 @@ const CalculatorDetail: React.FC = () => {
                         </select>
                       ) : (
                         <input 
+                          id={`input-${inp.name}`}
                           type={inp.type}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
@@ -730,8 +748,17 @@ const CalculatorDetail: React.FC = () => {
              <div className="p-6 space-y-4">
                  {/* Primary Result */}
                  {results.filter(r => r.isPrimary).map((res, i) => (
-                   <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20">
-                      <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
+                   <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20 relative group">
+                      <div className="flex justify-between items-start">
+                        <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
+                        <button
+                          onClick={() => handleCopy(`${res.value} ${res.unit || ''}`.trim(), i)}
+                          className="p-1.5 -mr-1 -mt-1 rounded-lg hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+                          aria-label="Copy result"
+                        >
+                          {copiedId === i ? <CheckIcon /> : <CopyIcon />}
+                        </button>
+                      </div>
                       <div className="mt-2 flex items-baseline gap-2">
                         <span className="text-4xl md:text-5xl font-bold tracking-tight">{res.value}</span>
                         {res.unit && <span className="text-xl text-blue-200">{res.unit}</span>}
