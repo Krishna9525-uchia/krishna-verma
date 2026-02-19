@@ -1,0 +1,3 @@
+## 2025-05-15 - Improving Accessibility in CalcMaster Pro
+**Learning:** Icon-only buttons (like mobile menus and search clear buttons) and unlinked form labels are common accessibility pitfalls that significantly hinder screen reader users. Ensuring all interactive elements have descriptive ARIA labels and all form inputs have associated labels improves both accessibility and usability (by increasing click targets).
+**Action:** Always check for icon-only buttons and ensure `aria-label` is present. Link all form labels to their respective inputs using `htmlFor` and `id` attributes. Implement `aria-expanded` on toggleable elements.
