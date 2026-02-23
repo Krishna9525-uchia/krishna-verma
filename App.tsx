@@ -113,6 +113,8 @@ const Header: React.FC<{ darkMode: boolean, setDarkMode: (v: boolean) => void }>
             <button 
               className="md:hidden p-2 text-slate-600 dark:text-slate-300"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
             >
               <MenuIcon />
             </button>
@@ -693,10 +695,11 @@ const CalculatorDetail: React.FC = () => {
              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                {calculator.inputs.map(inp => (
                  <div key={inp.name} className={inp.type === 'select' || calculator.inputs.length < 3 ? "col-span-full" : "col-span-1"}>
-                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
+                   <label htmlFor={inp.name} className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
                    <div className="relative group">
                       {inp.type === 'select' ? (
                         <select 
+                          id={inp.name}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
                           onChange={(e) => handleInputChange(inp.name, e.target.value)}
@@ -705,6 +708,7 @@ const CalculatorDetail: React.FC = () => {
                         </select>
                       ) : (
                         <input 
+                          id={inp.name}
                           type={inp.type}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
@@ -878,8 +882,14 @@ const App: React.FC = () => {
     <Router>
       <ScrollToTop />
       <div className="flex flex-col min-h-screen font-sans">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-white focus:text-blue-600 focus:font-bold focus:shadow-lg focus:rounded-b-lg focus:left-1/2 focus:-translate-x-1/2"
+        >
+          Skip to main content
+        </a>
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main className="flex-grow">
+        <main id="main-content" className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
