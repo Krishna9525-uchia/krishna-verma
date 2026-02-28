@@ -877,9 +877,23 @@ const App: React.FC = () => {
   return (
     <Router>
       <ScrollToTop />
+      <a
+        href="#main-content"
+        onClick={(e) => {
+          e.preventDefault();
+          const el = document.getElementById('main-content');
+          if (el) {
+            el.focus();
+            window.scrollTo(0, 0);
+          }
+        }}
+        className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-1/2 focus:-translate-x-1/2 focus:z-[100] focus:px-6 focus:py-3 focus:bg-blue-600 focus:text-white focus:font-bold focus:rounded-b-xl focus:shadow-2xl transition-all"
+      >
+        Skip to main content
+      </a>
       <div className="flex flex-col min-h-screen font-sans">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main className="flex-grow">
+        <main id="main-content" tabIndex={-1} className="flex-grow outline-none">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
