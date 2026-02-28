@@ -1,0 +1,3 @@
+## 2025-02-28 - Add skip to main content link
+**Learning:** In a single-page application with a fixed header and potentially complex navigation, a "Skip to main content" link is crucial for keyboard and screen reader accessibility. It allows users to bypass repetitive header links and go directly to the primary content. Using `tabIndex={-1}` on the target element (usually `<main>`) is necessary to ensure it can receive programmatic focus after the skip link is clicked.
+**Action:** Always include a skip link in the root layout of web applications. Ensure the target element has a unique ID and `tabIndex={-1}`, and consider using a small JavaScript snippet to explicitly set focus to handle inconsistencies across different browsers and screen readers.
