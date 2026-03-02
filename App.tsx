@@ -876,10 +876,21 @@ const App: React.FC = () => {
 
   return (
     <Router>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:shadow-lg transition-all"
+        onClick={(e) => {
+          e.preventDefault();
+          const main = document.getElementById('main-content');
+          main?.focus();
+        }}
+      >
+        Skip to main content
+      </a>
       <ScrollToTop />
       <div className="flex flex-col min-h-screen font-sans">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main className="flex-grow">
+        <main id="main-content" tabIndex={-1} className="flex-grow outline-none">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
