@@ -23,6 +23,26 @@ const ScrollToTop = () => {
   return null;
 };
 
+const SkipToMain = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const element = document.getElementById('main-content');
+    if (element) {
+      element.focus();
+    }
+  };
+
+  return (
+    <a
+      href="#main-content"
+      onClick={handleClick}
+      className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
+    >
+      Skip to main content
+    </a>
+  );
+};
+
 // SEO Component to handle Head changes
 const SEO: React.FC<{ title: string; description: string; schema?: any }> = ({ title, description, schema }) => {
   useEffect(() => {
@@ -101,7 +121,7 @@ const Header: React.FC<{ darkMode: boolean, setDarkMode: (v: boolean) => void }>
             <button 
               onClick={() => setDarkMode(!darkMode)} 
               className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50 relative w-10 h-10 flex items-center justify-center"
-              aria-label="Toggle Dark Mode"
+              aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
               <div className={`absolute transition-all duration-300 transform ${darkMode ? 'opacity-100 rotate-0 scale-100 text-yellow-400' : 'opacity-0 -rotate-90 scale-0'}`}>
                 <SunIcon />
@@ -113,6 +133,8 @@ const Header: React.FC<{ darkMode: boolean, setDarkMode: (v: boolean) => void }>
             <button 
               className="md:hidden p-2 text-slate-600 dark:text-slate-300"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+              aria-expanded={mobileMenuOpen}
             >
               <MenuIcon />
             </button>
@@ -294,9 +316,14 @@ const HomePage: React.FC = () => {
                       className="w-full py-5 px-4 text-lg text-slate-900 dark:text-white bg-transparent border-none focus:ring-0 placeholder-slate-400"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      aria-label="Search for calculators"
                     />
                     {search && (
-                      <button onClick={() => setSearch('')} className="pr-6 text-slate-400 hover:text-slate-600">
+                      <button
+                        onClick={() => setSearch('')}
+                        className="pr-6 text-slate-400 hover:text-slate-600"
+                        aria-label="Clear search"
+                      >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
                     )}
@@ -876,10 +903,11 @@ const App: React.FC = () => {
 
   return (
     <Router>
+      <SkipToMain />
       <ScrollToTop />
       <div className="flex flex-col min-h-screen font-sans">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main className="flex-grow">
+        <main id="main-content" tabIndex={-1} className="flex-grow outline-none">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
