@@ -23,6 +23,27 @@ const ScrollToTop = () => {
   return null;
 };
 
+const SkipToMain = () => {
+  const scrollToMain = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const main = document.getElementById('main-content');
+    if (main) {
+      main.focus();
+      main.scrollIntoView();
+    }
+  };
+
+  return (
+    <a
+      href="#main-content"
+      onClick={scrollToMain}
+      className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    >
+      Skip to main content
+    </a>
+  );
+};
+
 // SEO Component to handle Head changes
 const SEO: React.FC<{ title: string; description: string; schema?: any }> = ({ title, description, schema }) => {
   useEffect(() => {
@@ -111,8 +132,10 @@ const Header: React.FC<{ darkMode: boolean, setDarkMode: (v: boolean) => void }>
               </div>
             </button>
             <button 
-              className="md:hidden p-2 text-slate-600 dark:text-slate-300"
+              className="md:hidden p-2 text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-lg"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
+              aria-expanded={mobileMenuOpen}
             >
               <MenuIcon />
             </button>
@@ -686,17 +709,21 @@ const CalculatorDetail: React.FC = () => {
                  calculator.inputs.forEach(i => d[i.name] = i.defaultValue);
                  setInputs(d);
                  setResults(calculator.calculate(d));
-               }} className="text-xs font-semibold text-blue-600 hover:text-blue-800 uppercase tracking-wide">
+               }}
+               className="text-xs font-semibold text-blue-600 hover:text-blue-800 uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded px-1"
+               aria-label="Reset calculator inputs"
+               >
                  Reset
                </button>
              </div>
              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                {calculator.inputs.map(inp => (
                  <div key={inp.name} className={inp.type === 'select' || calculator.inputs.length < 3 ? "col-span-full" : "col-span-1"}>
-                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
+                   <label htmlFor={inp.name} className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
                    <div className="relative group">
                       {inp.type === 'select' ? (
                         <select 
+                          id={inp.name}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
                           onChange={(e) => handleInputChange(inp.name, e.target.value)}
@@ -705,6 +732,7 @@ const CalculatorDetail: React.FC = () => {
                         </select>
                       ) : (
                         <input 
+                          id={inp.name}
                           type={inp.type}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
@@ -876,10 +904,11 @@ const App: React.FC = () => {
 
   return (
     <Router>
+      <SkipToMain />
       <ScrollToTop />
       <div className="flex flex-col min-h-screen font-sans">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main className="flex-grow">
+        <main id="main-content" tabIndex={-1} className="flex-grow outline-none">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
