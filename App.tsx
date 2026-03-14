@@ -23,6 +23,22 @@ const ScrollToTop = () => {
   return null;
 };
 
+const SkipToMain = () => (
+  <a
+    href="#main-content"
+    className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:font-bold focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
+    onClick={(e) => {
+      e.preventDefault();
+      const main = document.getElementById('main-content');
+      if (main) {
+        main.focus();
+      }
+    }}
+  >
+    Skip to main content
+  </a>
+);
+
 // SEO Component to handle Head changes
 const SEO: React.FC<{ title: string; description: string; schema?: any }> = ({ title, description, schema }) => {
   useEffect(() => {
@@ -113,6 +129,8 @@ const Header: React.FC<{ darkMode: boolean, setDarkMode: (v: boolean) => void }>
             <button 
               className="md:hidden p-2 text-slate-600 dark:text-slate-300"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Close Menu" : "Open Menu"}
+              aria-expanded={mobileMenuOpen}
             >
               <MenuIcon />
             </button>
@@ -294,9 +312,14 @@ const HomePage: React.FC = () => {
                       className="w-full py-5 px-4 text-lg text-slate-900 dark:text-white bg-transparent border-none focus:ring-0 placeholder-slate-400"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      aria-label="Search for calculators"
                     />
                     {search && (
-                      <button onClick={() => setSearch('')} className="pr-6 text-slate-400 hover:text-slate-600">
+                      <button
+                        onClick={() => setSearch('')}
+                        className="pr-6 text-slate-400 hover:text-slate-600"
+                        aria-label="Clear search"
+                      >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
                     )}
@@ -693,10 +716,11 @@ const CalculatorDetail: React.FC = () => {
              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                {calculator.inputs.map(inp => (
                  <div key={inp.name} className={inp.type === 'select' || calculator.inputs.length < 3 ? "col-span-full" : "col-span-1"}>
-                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
+                   <label htmlFor={inp.name} className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
                    <div className="relative group">
                       {inp.type === 'select' ? (
                         <select 
+                          id={inp.name}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
                           onChange={(e) => handleInputChange(inp.name, e.target.value)}
@@ -705,6 +729,7 @@ const CalculatorDetail: React.FC = () => {
                         </select>
                       ) : (
                         <input 
+                          id={inp.name}
                           type={inp.type}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
@@ -876,10 +901,11 @@ const App: React.FC = () => {
 
   return (
     <Router>
+      <SkipToMain />
       <ScrollToTop />
       <div className="flex flex-col min-h-screen font-sans">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main className="flex-grow">
+        <main id="main-content" tabIndex={-1} className="flex-grow outline-none">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
