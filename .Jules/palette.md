@@ -1,0 +1,3 @@
+## 2025-05-14 - Importance of Explicit Label-Input Association in Dynamic Forms
+**Learning:** In applications that dynamically render form inputs from a configuration object (like this app's CalculatorDetail), developers often overlook the explicit association between labels and inputs. Relying solely on proximity or wrappers is insufficient for accessibility; screen readers require the 'for'/'id' relationship to properly announce fields.
+**Action:** When working with dynamic form generation logic, always ensure that each input has a unique 'id' (e.g., derived from its configuration name) and that its corresponding 'label' uses the 'htmlFor' attribute to reference that 'id'.
