@@ -15,6 +15,27 @@ const HomeIcon = () => <svg className="w-4 h-4 mr-1" fill="none" stroke="current
 
 // --- Components ---
 
+const SkipToMain = () => {
+  const handleSkip = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const main = document.getElementById('main-content');
+    if (main) {
+      main.focus();
+      main.scrollIntoView();
+    }
+  };
+
+  return (
+    <a
+      href="#main-content"
+      onClick={handleSkip}
+      className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-[100] bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg font-bold"
+    >
+      Skip to main content
+    </a>
+  );
+};
+
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -113,6 +134,8 @@ const Header: React.FC<{ darkMode: boolean, setDarkMode: (v: boolean) => void }>
             <button 
               className="md:hidden p-2 text-slate-600 dark:text-slate-300"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+              aria-expanded={mobileMenuOpen}
             >
               <MenuIcon />
             </button>
@@ -296,7 +319,11 @@ const HomePage: React.FC = () => {
                       onChange={(e) => setSearch(e.target.value)}
                     />
                     {search && (
-                      <button onClick={() => setSearch('')} className="pr-6 text-slate-400 hover:text-slate-600">
+                      <button
+                        onClick={() => setSearch('')}
+                        className="pr-6 text-slate-400 hover:text-slate-600"
+                        aria-label="Clear search"
+                      >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
                     )}
@@ -876,10 +903,11 @@ const App: React.FC = () => {
 
   return (
     <Router>
+      <SkipToMain />
       <ScrollToTop />
       <div className="flex flex-col min-h-screen font-sans">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main className="flex-grow">
+        <main id="main-content" tabIndex={-1} className="flex-grow outline-none">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
