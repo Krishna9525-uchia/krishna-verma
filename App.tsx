@@ -15,6 +15,27 @@ const HomeIcon = () => <svg className="w-4 h-4 mr-1" fill="none" stroke="current
 
 // --- Components ---
 
+const SkipToMain: React.FC = () => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.focus();
+      mainContent.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <a
+      href="#main-content"
+      onClick={handleClick}
+      className="sr-only focus:not-sr-only absolute top-4 left-4 z-[100] bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg outline-none focus:ring-2 focus:ring-blue-400"
+    >
+      Skip to main content
+    </a>
+  );
+};
+
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -876,10 +897,11 @@ const App: React.FC = () => {
 
   return (
     <Router>
+      <SkipToMain />
       <ScrollToTop />
       <div className="flex flex-col min-h-screen font-sans">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main className="flex-grow">
+        <main id="main-content" tabIndex={-1} className="flex-grow outline-none">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
