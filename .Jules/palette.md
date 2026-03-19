@@ -1,0 +1,3 @@
+## 2025-05-15 - Accessible Skip Links in HashRouter Environments
+**Learning:** In applications using `HashRouter` from `react-router-dom`, standard anchor links (e.g., `<a href="#main-content">`) can sometimes be intercepted by the router, leading to unexpected navigation or failing to jump to the target element.
+**Action:** Implement skip-to-main links with an `onClick` handler that calls `e.preventDefault()`, manually sets focus to the target element (using `element.focus()`), and ensures visibility with `element.scrollIntoView()`. Ensure the target element has `tabIndex={-1}` to receive programmatic focus.
