@@ -1,0 +1,3 @@
+## 2026-03-22 - Improving Keyboard and Screen Reader Accessibility
+**Learning:** In a HashRouter environment, standard anchor links (e.g., `<a href="#main-content">`) may trigger routing instead of simple element jumping. Additionally, when implementing a 'Skip to main content' link, the target element must have `tabIndex={-1}` and `outline-none` to receive programmatic focus properly without an ugly focus ring on the entire section.
+**Action:** Use an `onClick` handler with `e.preventDefault()` and `element.focus()` for reliable accessibility anchors in HashRouter apps, and ensure the target has `tabIndex={-1}`.
