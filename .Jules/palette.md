@@ -1,0 +1,3 @@
+## 2025-03-23 - Headless Rendering Fix for CDN-based React Apps
+**Learning:** In projects using an `importmap` for dependencies (like React) but missing the entry script tag in `index.html`, the application may render as a blank page in headless browsers like Playwright, even if it works in some local development environments. This happens because the root element remains empty if the bootstrapping script is not explicitly included in the HTML.
+**Action:** Always verify that `index.html` contains `<script type="module" src="/index.tsx"></script>` (or the equivalent entry point) to ensure the React application hydrates correctly in all environments.
