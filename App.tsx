@@ -12,6 +12,8 @@ const SearchIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentCol
 const MenuIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>;
 const ArrowRightIcon = () => <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>;
 const HomeIcon = () => <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>;
+const CopyIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>;
+const CheckIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
 
 // --- Components ---
 
@@ -310,7 +312,7 @@ const HomePage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 relative z-10">
         {search ? (
           <div className="animate-fade-in">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-8" aria-live="polite">
                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Search Results</h2>
                <span className="text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full">{filtered.length} found</span>
             </div>
@@ -578,6 +580,7 @@ const CalculatorDetail: React.FC = () => {
   const [results, setResults] = useState<any[]>([]);
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (calculator) {
@@ -637,6 +640,14 @@ const CalculatorDetail: React.FC = () => {
     setAiExplanation(explanation);
     setLoadingAi(false);
   }
+
+  const handleCopy = () => {
+    if (aiExplanation) {
+      navigator.clipboard.writeText(aiExplanation);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   if (!calculator) return <div className="min-h-screen pt-24 text-center dark:text-white">Calculator not found.</div>;
 
@@ -727,7 +738,7 @@ const CalculatorDetail: React.FC = () => {
                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span> Results
                </h3>
              </div>
-             <div className="p-6 space-y-4">
+             <div className="p-6 space-y-4" aria-live="polite" aria-atomic="true">
                  {/* Primary Result */}
                  {results.filter(r => r.isPrimary).map((res, i) => (
                    <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20">
@@ -780,8 +791,16 @@ const CalculatorDetail: React.FC = () => {
                           <svg className="w-24 h-24 text-purple-600" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a1 1 0 0 1 1 1v2.17a7.002 7.002 0 0 1 5.83 5.83h2.17a1 1 0 1 1 0 2h-2.17A7.002 7.002 0 0 1 13 18.83v2.17a1 1 0 1 1-2 0v-2.17A7.002 7.002 0 0 1 5.17 13H3a1 1 0 1 1 0-2h2.17A7.002 7.002 0 0 1 11 5.17V3a1 1 0 0 1 1-1zm0 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
                        </div>
                        <div className="relative z-10">
-                         <div className="flex items-center mb-3">
+                         <div className="flex items-center justify-between mb-3">
                            <span className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">AI Insight</span>
+                           <button
+                             onClick={handleCopy}
+                             className="text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/50 p-1.5 rounded-lg transition-colors focus:ring-2 focus:ring-purple-500/50 outline-none"
+                             title={copied ? "Copied!" : "Copy insight"}
+                             aria-label={copied ? "Insight copied to clipboard" : "Copy insight to clipboard"}
+                           >
+                             {copied ? <CheckIcon /> : <CopyIcon />}
+                           </button>
                          </div>
                          <p className="text-slate-800 dark:text-slate-200 leading-relaxed text-sm md:text-base">{aiExplanation}</p>
                        </div>
