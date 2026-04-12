@@ -1,0 +1,3 @@
+## 2025-05-14 - [Accessible Forms and Results]
+**Learning:** This application had a recurring pattern of missing semantic associations between labels and inputs, and icon-only buttons lacked descriptive ARIA labels. Additionally, providing a 'Copy to Clipboard' feature for calculation results significantly reduces friction for users who need to use these values elsewhere.
+**Action:** Always check for `htmlFor`/`id` pairs on form elements and ensure all icon buttons have `aria-label`. Use the `group/res` and `opacity-0 group-hover/res:opacity-100` pattern for secondary actions on result cards to keep the UI clean but accessible.
