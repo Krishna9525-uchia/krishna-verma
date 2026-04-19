@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useId } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useParams, useLocation } from 'react-router-dom';
 import { CalculatorDef, Category } from './types';
 import { calculators, getCalculator } from './data/calculators';
@@ -12,6 +12,8 @@ const SearchIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentCol
 const MenuIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>;
 const ArrowRightIcon = () => <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>;
 const HomeIcon = () => <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>;
+const CopyIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>;
+const CheckIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
 
 // --- Components ---
 
@@ -113,6 +115,8 @@ const Header: React.FC<{ darkMode: boolean, setDarkMode: (v: boolean) => void }>
             <button 
               className="md:hidden p-2 text-slate-600 dark:text-slate-300"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Navigation Menu"
+              aria-expanded={mobileMenuOpen}
             >
               <MenuIcon />
             </button>
@@ -294,9 +298,14 @@ const HomePage: React.FC = () => {
                       className="w-full py-5 px-4 text-lg text-slate-900 dark:text-white bg-transparent border-none focus:ring-0 placeholder-slate-400"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      aria-label="Search calculators"
                     />
                     {search && (
-                      <button onClick={() => setSearch('')} className="pr-6 text-slate-400 hover:text-slate-600">
+                      <button
+                        onClick={() => setSearch('')}
+                        className="pr-6 text-slate-400 hover:text-slate-600"
+                        aria-label="Clear search"
+                      >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
                     )}
@@ -312,7 +321,7 @@ const HomePage: React.FC = () => {
           <div className="animate-fade-in">
             <div className="flex items-center justify-between mb-8">
                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Search Results</h2>
-               <span className="text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full">{filtered.length} found</span>
+               <span className="text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full" aria-live="polite">{filtered.length} found</span>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -574,10 +583,13 @@ const AboutPage: React.FC = () => {
 const CalculatorDetail: React.FC = () => {
   const { id } = useParams<{id: string}>();
   const calculator = getCalculator(id || '');
+  const baseId = useId();
   const [inputs, setInputs] = useState<Record<string, any>>({});
   const [results, setResults] = useState<any[]>([]);
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (calculator) {
@@ -591,6 +603,12 @@ const CalculatorDetail: React.FC = () => {
       window.scrollTo(0, 0);
     }
   }, [id, calculator]);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const schema = useMemo(() => {
     if (!calculator) return null;
@@ -636,7 +654,16 @@ const CalculatorDetail: React.FC = () => {
     const explanation = await getExplanation(calculator.title, inputs, results);
     setAiExplanation(explanation);
     setLoadingAi(false);
-  }
+  };
+
+  const handleCopy = (value: string | number, label: string, unit?: string) => {
+    const textToCopy = `${value}${unit ? ' ' + unit : ''}`;
+    navigator.clipboard.writeText(String(textToCopy)).then(() => {
+      setCopiedId(label);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => setCopiedId(null), 2000);
+    });
+  };
 
   if (!calculator) return <div className="min-h-screen pt-24 text-center dark:text-white">Calculator not found.</div>;
 
@@ -686,17 +713,21 @@ const CalculatorDetail: React.FC = () => {
                  calculator.inputs.forEach(i => d[i.name] = i.defaultValue);
                  setInputs(d);
                  setResults(calculator.calculate(d));
-               }} className="text-xs font-semibold text-blue-600 hover:text-blue-800 uppercase tracking-wide">
+               }}
+               className="text-xs font-semibold text-blue-600 hover:text-blue-800 uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded px-1"
+               aria-label="Reset all inputs"
+               >
                  Reset
                </button>
              </div>
              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                {calculator.inputs.map(inp => (
                  <div key={inp.name} className={inp.type === 'select' || calculator.inputs.length < 3 ? "col-span-full" : "col-span-1"}>
-                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
+                   <label htmlFor={`${baseId}-${inp.name}`} className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
                    <div className="relative group">
                       {inp.type === 'select' ? (
                         <select 
+                          id={`${baseId}-${inp.name}`}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
                           onChange={(e) => handleInputChange(inp.name, e.target.value)}
@@ -705,6 +736,7 @@ const CalculatorDetail: React.FC = () => {
                         </select>
                       ) : (
                         <input 
+                          id={`${baseId}-${inp.name}`}
                           type={inp.type}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
@@ -730,8 +762,18 @@ const CalculatorDetail: React.FC = () => {
              <div className="p-6 space-y-4">
                  {/* Primary Result */}
                  {results.filter(r => r.isPrimary).map((res, i) => (
-                   <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20">
-                      <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
+                   <div key={i} className="group/res relative bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20">
+                      <div className="flex justify-between items-start">
+                        <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
+                        <button
+                          onClick={() => handleCopy(res.value, res.label, res.unit)}
+                          className="opacity-0 group-hover/res:opacity-100 focus:opacity-100 p-2 hover:bg-white/10 rounded-lg transition-all"
+                          aria-label={copiedId === res.label ? "Result copied" : "Copy result"}
+                          title="Copy to clipboard"
+                        >
+                          {copiedId === res.label ? <CheckIcon /> : <CopyIcon />}
+                        </button>
+                      </div>
                       <div className="mt-2 flex items-baseline gap-2">
                         <span className="text-4xl md:text-5xl font-bold tracking-tight">{res.value}</span>
                         {res.unit && <span className="text-xl text-blue-200">{res.unit}</span>}
@@ -743,8 +785,18 @@ const CalculatorDetail: React.FC = () => {
                  {/* Secondary Results Grid */}
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {results.filter(r => !r.isPrimary).map((res, i) => (
-                      <div key={i} className="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-100 dark:border-slate-700">
-                         <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">{res.label}</span>
+                      <div key={i} className="group/res relative bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-100 dark:border-slate-700">
+                         <div className="flex justify-between items-start">
+                            <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">{res.label}</span>
+                            <button
+                              onClick={() => handleCopy(res.value, res.label, res.unit)}
+                              className="opacity-0 group-hover/res:opacity-100 focus:opacity-100 p-1.5 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-all"
+                              aria-label={copiedId === res.label ? "Result copied" : "Copy result"}
+                              title="Copy to clipboard"
+                            >
+                              {copiedId === res.label ? <CheckIcon /> : <CopyIcon />}
+                            </button>
+                         </div>
                          <div className="mt-1 flex items-baseline gap-1">
                             <span className="text-xl font-bold text-slate-800 dark:text-slate-100">{res.value}</span>
                             {res.unit && <span className="text-sm text-slate-500">{res.unit}</span>}
@@ -877,9 +929,15 @@ const App: React.FC = () => {
   return (
     <Router>
       <ScrollToTop />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] bg-blue-600 text-white px-4 py-2 rounded-lg font-bold shadow-xl"
+      >
+        Skip to main content
+      </a>
       <div className="flex flex-col min-h-screen font-sans">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main className="flex-grow">
+        <main id="main-content" className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
