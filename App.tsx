@@ -290,6 +290,7 @@ const HomePage: React.FC = () => {
                    </div>
                    <input 
                       type="text" 
+                      aria-label="Search calculators"
                       placeholder="Search for 'Mortgage', 'BMI', or 'Percentage'..." 
                       className="w-full py-5 px-4 text-lg text-slate-900 dark:text-white bg-transparent border-none focus:ring-0 placeholder-slate-400"
                       value={search}
@@ -578,6 +579,7 @@ const CalculatorDetail: React.FC = () => {
   const [results, setResults] = useState<any[]>([]);
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
     if (calculator) {
@@ -681,12 +683,16 @@ const CalculatorDetail: React.FC = () => {
                <h3 className="font-bold text-slate-800 dark:text-white flex items-center">
                  <span className="w-2 h-2 rounded-full bg-blue-500 mr-2"></span> Calculate
                </h3>
-               <button onClick={() => {
-                 const d: any = {};
-                 calculator.inputs.forEach(i => d[i.name] = i.defaultValue);
-                 setInputs(d);
-                 setResults(calculator.calculate(d));
-               }} className="text-xs font-semibold text-blue-600 hover:text-blue-800 uppercase tracking-wide">
+               <button
+                 aria-label="Reset fields"
+                 onClick={() => {
+                   const d: any = {};
+                   calculator.inputs.forEach(i => d[i.name] = i.defaultValue);
+                   setInputs(d);
+                   setResults(calculator.calculate(d));
+                 }}
+                 className="text-xs font-semibold text-blue-600 hover:text-blue-800 uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded px-1"
+               >
                  Reset
                </button>
              </div>
@@ -722,20 +728,46 @@ const CalculatorDetail: React.FC = () => {
           
           {/* Results Dashboard */}
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden animate-slide-up" style={{animationDelay: '0.1s'}}>
-             <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
+             <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                <h3 className="font-bold text-slate-800 dark:text-white flex items-center">
                  <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span> Results
                </h3>
+               <div aria-live="polite" className="sr-only">
+                 {copied ? `${copied} copied to clipboard` : ""}
+               </div>
              </div>
              <div className="p-6 space-y-4">
                  {/* Primary Result */}
                  {results.filter(r => r.isPrimary).map((res, i) => (
-                   <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20">
+                   <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20 relative group">
                       <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
-                      <div className="mt-2 flex items-baseline gap-2">
-                        <span className="text-4xl md:text-5xl font-bold tracking-tight">{res.value}</span>
-                        {res.unit && <span className="text-xl text-blue-200">{res.unit}</span>}
+                      <div className="mt-2 flex items-baseline justify-between gap-2">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-4xl md:text-5xl font-bold tracking-tight">{res.value}</span>
+                          {res.unit && <span className="text-xl text-blue-200">{res.unit}</span>}
+                        </div>
+                        <button
+                          aria-label="Copy result"
+                          title="Copy to clipboard"
+                          onClick={() => {
+                            navigator.clipboard.writeText(res.value.toString());
+                            setCopied(res.label);
+                            setTimeout(() => setCopied(null), 2000);
+                          }}
+                          className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+                        >
+                          {copied === res.label ? (
+                            <svg className="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                          ) : (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                          )}
+                        </button>
                       </div>
+                      {copied === res.label && (
+                        <div className="absolute top-2 right-12 bg-slate-900 text-white text-[10px] px-2 py-1 rounded animate-fade-in shadow-xl">
+                          Copied!
+                        </div>
+                      )}
                       {res.details && <div className="mt-3 pt-3 border-t border-white/20 text-blue-50 text-sm">{res.details}</div>}
                    </div>
                  ))}
