@@ -12,6 +12,8 @@ const SearchIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentCol
 const MenuIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>;
 const ArrowRightIcon = () => <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>;
 const HomeIcon = () => <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>;
+const CopyIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>;
+const CheckIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
 
 // --- Components ---
 
@@ -398,58 +400,42 @@ const CategoryPage: React.FC = () => {
              <HomeIcon /> Back to Home
           </Link>
           <div className="flex items-center space-x-4">
-             <div className="h-10 w-2 bg-blue-600 rounded-full"></div>
+             <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-2xl text-white shadow-lg">
+                {category === 'Financial' ? '💰' : category === 'Health' ? '⚖️' : category === 'Math' ? '𝓧' : '⚙️'}
+             </div>
              <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white">{category} Calculators</h1>
           </div>
-          <p className="mt-4 text-slate-600 dark:text-slate-400 text-lg max-w-2xl">
-             Explore our collection of {catCalcs.length} specialized calculators for {category?.toLowerCase()} purposes.
-          </p>
         </div>
         
-        {catCalcs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up">
-            {catCalcs.map(c => <CalculatorCard key={c.id} calc={c} />)}
-          </div>
-        ) : (
-           <div className="text-center py-20 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-              <p className="text-slate-500">No calculators found in this category.</p>
-           </div>
-        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+           {catCalcs.map(calc => <CalculatorCard key={calc.id} calc={calc} />)}
+        </div>
       </div>
     </div>
   );
 };
 
 const AboutPage: React.FC = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pt-24 pb-20">
+    <div className="min-h-screen bg-white dark:bg-slate-900 pt-32 pb-24">
       <SEO 
-        title="About CalcMaster Pro - The Comprehensive Guide"
-        description="Read the full story behind CalcMaster Pro. A detailed look at our mission, technology, AI integration, and commitment to free, private, and accurate online tools."
+        title="About Us - CalcMaster Pro"
+        description="Learn about the mission, precision, and technology behind CalcMaster Pro."
       />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-16 animate-slide-up">
-           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-bold uppercase tracking-wide mb-6">
-             Our Story & Vision
-           </div>
-           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-6 leading-tight">
-             Redefining the Standard for <br/><span className="text-gradient">Online Computation</span>
-           </h1>
-           <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
-             We built CalcMaster Pro to solve a simple problem: the internet lacked a centralized, beautiful, and intelligent hub for everyday calculations. Here is our journey.
-           </p>
-        </div>
+        <div className="space-y-16">
+          <header className="text-center">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 dark:text-white mb-6">Our Mission</h1>
+            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+              We believe that the best tools should be free, accessible, and intelligently designed.
+            </p>
+          </header>
 
-        {/* Content */}
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 md:p-16 shadow-sm border border-slate-200 dark:border-slate-700 space-y-16 animate-slide-up" style={{animationDelay: '0.1s'}}>
-          
           <section className="prose prose-slate dark:prose-invert prose-lg max-w-none">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white">The Genesis of CalcMaster Pro</h2>
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white">The Genesis</h2>
+            <p>
+              CalcMaster Pro was founded on a simple observation: the tools we use to make important life decisions—about our finances, our health, and our education—are often poorly designed and hard to find.
+            </p>
             <p>
               In the early days of the internet, calculators were among the first utilities to appear online. Yet, two decades later, the landscape had become stagnant. Users searching for a simple "loan calculator" or "BMI checker" were often greeted by sites cluttered with aggressive advertising, outdated layouts reminiscent of the late 90s, and questionable accuracy.
             </p>
@@ -576,6 +562,7 @@ const CalculatorDetail: React.FC = () => {
   const calculator = getCalculator(id || '');
   const [inputs, setInputs] = useState<Record<string, any>>({});
   const [results, setResults] = useState<any[]>([]);
+  const [copied, setCopied] = useState<string | null>(null);
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
 
@@ -637,6 +624,12 @@ const CalculatorDetail: React.FC = () => {
     setAiExplanation(explanation);
     setLoadingAi(false);
   }
+
+  const handleCopy = (value: string | number, label: string) => {
+    navigator.clipboard.writeText(String(value));
+    setCopied(label);
+    setTimeout(() => setCopied(null), 2000);
+  };
 
   if (!calculator) return <div className="min-h-screen pt-24 text-center dark:text-white">Calculator not found.</div>;
 
@@ -730,13 +723,28 @@ const CalculatorDetail: React.FC = () => {
              <div className="p-6 space-y-4">
                  {/* Primary Result */}
                  {results.filter(r => r.isPrimary).map((res, i) => (
-                   <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20">
-                      <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
+                   <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20 relative group">
+                      <div className="flex justify-between items-start">
+                        <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
+                        <button
+                          onClick={() => handleCopy(res.value, res.label)}
+                          className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+                          aria-label={`Copy ${res.label}`}
+                          title="Copy to clipboard"
+                        >
+                          {copied === res.label ? <CheckIcon /> : <CopyIcon />}
+                        </button>
+                      </div>
                       <div className="mt-2 flex items-baseline gap-2">
                         <span className="text-4xl md:text-5xl font-bold tracking-tight">{res.value}</span>
                         {res.unit && <span className="text-xl text-blue-200">{res.unit}</span>}
                       </div>
                       {res.details && <div className="mt-3 pt-3 border-t border-white/20 text-blue-50 text-sm">{res.details}</div>}
+                      {copied === res.label && (
+                        <div className="absolute top-12 right-6 bg-slate-900 text-white text-xs py-1 px-2 rounded shadow-lg animate-fade-in" aria-live="polite">
+                          Copied!
+                        </div>
+                      )}
                    </div>
                  ))}
 
@@ -777,7 +785,7 @@ const CalculatorDetail: React.FC = () => {
                    ) : (
                      <div className="bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-800/50 rounded-2xl p-6 animate-fade-in relative overflow-hidden">
                        <div className="absolute top-0 right-0 p-4 opacity-10">
-                          <svg className="w-24 h-24 text-purple-600" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a1 1 0 0 1 1 1v2.17a7.002 7.002 0 0 1 5.83 5.83h2.17a1 1 0 1 1 0 2h-2.17A7.002 7.002 0 0 1 13 18.83v2.17a1 1 0 1 1-2 0v-2.17A7.002 7.002 0 0 1 5.17 13H3a1 1 0 1 1 0-2h2.17A7.002 7.002 0 0 1 11 5.17V3a1 1 0 0 1 1-1zm0 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
+                          <svg className="w-24 h-24 text-purple-600" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a1 1 0 0 1 1 1v2.17a7.002 7.002 0 0 1 5.83 5.83h2.17a1 1 0 1 1 0 2h-2.17A7.002 7.002 0 0 1 13 18.83v2.17a1 1 0 1 1-2 0v-2.17A7.002 7.002 0 0 1 5.17 13H3a1 1 0 1 1-2 0v2.17A7.002 7.002 0 0 1 5.17 13H3a1 1 0 1 1 0-2h2.17A7.002 7.002 0 0 1 11 5.17V3a1 1 0 0 1 1-1zm0 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
                        </div>
                        <div className="relative z-10">
                          <div className="flex items-center mb-3">
@@ -842,7 +850,7 @@ const CalculatorDetail: React.FC = () => {
                       <summary className="p-4 font-semibold text-slate-900 dark:text-white list-none flex justify-between items-center outline-none">
                         {faq.question}
                         <span className="transition-transform group-open:rotate-180 text-slate-400">
-                          <svg fill="none" height="20" width="20" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                          <svg fill="none" height="20" width="20" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"></path></svg>
                         </span>
                       </summary>
                       <div className="px-4 pb-4 text-slate-600 dark:text-slate-400 text-sm leading-relaxed border-t border-slate-200/50 dark:border-slate-700/50 pt-3">
