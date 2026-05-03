@@ -1,0 +1,3 @@
+## 2026-05-03 - Result Copy Utility with Visual Feedback
+**Learning:** Adding a copy-to-clipboard button to calculation results significantly improves the utility of a calculator app by reducing manual transcription errors. Providing immediate visual feedback (e.g., switching an icon for 2 seconds) is crucial for confirming the action in a seamless way. Ensuring the button is visible on focus (not just hover) is a key accessibility requirement for keyboard users.
+**Action:** Use the 'group' and 'focus-within:opacity-100' pattern to ensure hidden-by-default utility buttons are accessible to keyboard users.
