@@ -1,0 +1,3 @@
+## 2025-05-22 - [Copy-to-Clipboard Utility & Visual Feedback]
+**Learning:** In utility-driven applications like calculators, providing a quick way to copy primary results significantly reduces friction. Visual feedback (switching icons) provides immediate confirmation and "delight" that is often missing from simple tools. Combining focus-visible styles with hover-only visibility on desktop maintains a clean UI without sacrificing accessibility.
+**Action:** When implementing copy-to-clipboard, always include a success state (e.g., 2-second checkmark) and ensure the button is accessible to keyboard users via focus indicators and proper ARIA labels.
