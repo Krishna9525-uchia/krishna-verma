@@ -693,10 +693,11 @@ const CalculatorDetail: React.FC = () => {
              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                {calculator.inputs.map(inp => (
                  <div key={inp.name} className={inp.type === 'select' || calculator.inputs.length < 3 ? "col-span-full" : "col-span-1"}>
-                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
+                   <label htmlFor={inp.name} className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{inp.label}</label>
                    <div className="relative group">
                       {inp.type === 'select' ? (
                         <select 
+                          id={inp.name}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
                           onChange={(e) => handleInputChange(inp.name, e.target.value)}
@@ -705,6 +706,7 @@ const CalculatorDetail: React.FC = () => {
                         </select>
                       ) : (
                         <input 
+                          id={inp.name}
                           type={inp.type}
                           className="w-full rounded-xl border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white py-3 px-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
                           value={inputs[inp.name]}
