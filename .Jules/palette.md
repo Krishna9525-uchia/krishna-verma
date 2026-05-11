@@ -1,0 +1,3 @@
+## 2025-05-14 - Label-Input Association in Dynamic Forms
+**Learning:** In React applications that generate forms dynamically (e.g., mapping over a list of input definitions), it is common to overlook the explicit association between `<label>` and `<input>` elements. Without `htmlFor` and `id` attributes, screen readers cannot properly describe the input, and users cannot focus the input by clicking the label.
+**Action:** Always ensure that loop-generated form controls include unique `id` attributes and that their corresponding labels use the `htmlFor` attribute, typically leveraging a stable unique property from the data object like `name` or `id`.
