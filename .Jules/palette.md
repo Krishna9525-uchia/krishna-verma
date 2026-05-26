@@ -1,0 +1,3 @@
+## 2025-05-14 - [Copy to Clipboard Micro-UX]
+**Learning:** Providing a temporary success state (approx 2s) after clipboard actions reduces user uncertainty and eliminates the need for intrusive notifications. Using a named Tailwind group like 'group/result' with specific visibility classes ('opacity-0 group-hover/result:opacity-100 focus:opacity-100') allows for clean, discoverable interactions that don't cause layout shifts.
+**Action:** Implement similar 'hover-to-reveal' buttons for secondary actions in dashboard-like interfaces, ensuring they also include 'focus' states for keyboard accessibility and dynamic 'aria-label' for screen reader feedback.
