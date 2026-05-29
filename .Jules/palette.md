@@ -1,0 +1,3 @@
+## 2025-05-15 - Clipboard Micro-UX & Accessibility
+**Learning:** When implementing a 'Copy to Clipboard' feature in a list of results, three critical patterns ensure a high-quality experience: 1) Always stringify values before passing to `navigator.clipboard.writeText` to handle numeric results safely. 2) Use unique state keys (e.g., `result-id-index`) to manage success indicators, preventing visual state collisions where multiple items show 'Copied!' simultaneously. 3) Never use `outline-none` without providing a `focus:ring` or similar visible focus indicator to maintain keyboard accessibility.
+**Action:** Use `String(val)` for clipboard actions, unique identifiers for local success states, and ensure focus rings are present on all new interactive elements.
