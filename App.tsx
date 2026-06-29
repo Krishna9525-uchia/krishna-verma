@@ -12,6 +12,8 @@ const SearchIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentCol
 const MenuIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>;
 const ArrowRightIcon = () => <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>;
 const HomeIcon = () => <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>;
+const CopyIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>;
+const CheckIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
 
 // --- Components ---
 
@@ -113,6 +115,7 @@ const Header: React.FC<{ darkMode: boolean, setDarkMode: (v: boolean) => void }>
             <button 
               className="md:hidden p-2 text-slate-600 dark:text-slate-300"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Mobile Menu"
             >
               <MenuIcon />
             </button>
@@ -292,11 +295,16 @@ const HomePage: React.FC = () => {
                       type="text" 
                       placeholder="Search for 'Mortgage', 'BMI', or 'Percentage'..." 
                       className="w-full py-5 px-4 text-lg text-slate-900 dark:text-white bg-transparent border-none focus:ring-0 placeholder-slate-400"
+                      aria-label="Search calculators"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                     />
                     {search && (
-                      <button onClick={() => setSearch('')} className="pr-6 text-slate-400 hover:text-slate-600">
+                      <button
+                        onClick={() => setSearch('')}
+                        className="pr-6 text-slate-400 hover:text-slate-600"
+                        aria-label="Clear search"
+                      >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
                     )}
@@ -578,6 +586,14 @@ const CalculatorDetail: React.FC = () => {
   const [results, setResults] = useState<any[]>([]);
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopy = (value: any, id: string) => {
+    navigator.clipboard.writeText(String(value)).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }).catch(err => console.error('Failed to copy: ', err));
+  };
 
   useEffect(() => {
     if (calculator) {
@@ -730,8 +746,17 @@ const CalculatorDetail: React.FC = () => {
              <div className="p-6 space-y-4">
                  {/* Primary Result */}
                  {results.filter(r => r.isPrimary).map((res, i) => (
-                   <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20">
-                      <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
+                   <div key={i} className="group/result relative bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20 transition-all">
+                      <div className="flex justify-between items-start">
+                        <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
+                        <button
+                          onClick={() => handleCopy(res.value, `primary-${i}`)}
+                          className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors focus:ring-2 focus:ring-white/50 outline-none"
+                          aria-label={copiedId === `primary-${i}` ? "Copied!" : "Copy result"}
+                        >
+                          {copiedId === `primary-${i}` ? <CheckIcon /> : <CopyIcon />}
+                        </button>
+                      </div>
                       <div className="mt-2 flex items-baseline gap-2">
                         <span className="text-4xl md:text-5xl font-bold tracking-tight">{res.value}</span>
                         {res.unit && <span className="text-xl text-blue-200">{res.unit}</span>}
@@ -743,8 +768,17 @@ const CalculatorDetail: React.FC = () => {
                  {/* Secondary Results Grid */}
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {results.filter(r => !r.isPrimary).map((res, i) => (
-                      <div key={i} className="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-100 dark:border-slate-700">
-                         <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">{res.label}</span>
+                      <div key={i} className="group/result relative bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-100 dark:border-slate-700 hover:border-blue-200 dark:hover:border-blue-900 transition-all">
+                         <div className="flex justify-between items-start">
+                            <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">{res.label}</span>
+                            <button
+                              onClick={() => handleCopy(res.value, `secondary-${i}`)}
+                              className="opacity-0 group-hover/result:opacity-100 focus:opacity-100 p-1 rounded-md text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all focus:ring-2 focus:ring-blue-500/50 outline-none"
+                              aria-label={copiedId === `secondary-${i}` ? "Copied!" : "Copy result"}
+                            >
+                              {copiedId === `secondary-${i}` ? <CheckIcon /> : <CopyIcon />}
+                            </button>
+                         </div>
                          <div className="mt-1 flex items-baseline gap-1">
                             <span className="text-xl font-bold text-slate-800 dark:text-slate-100">{res.value}</span>
                             {res.unit && <span className="text-sm text-slate-500">{res.unit}</span>}
