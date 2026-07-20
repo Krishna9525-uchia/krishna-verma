@@ -1,0 +1,3 @@
+## 2025-07-20 - Semantic Label-Input Binding for Interactive Forms
+**Learning:** In dynamically mapped forms, omitting explicit `htmlFor` and `id` bindings makes labels purely visual. Binding them semantically with unique identifiers (e.g. `inp.name`) and adding `cursor-pointer` dramatically improves keyboard navigation, screen reader accessibility, and mobile tap targets by allowing label clicks to activate fields.
+**Action:** Always map labels dynamically using `htmlFor` and inputs/selects using `id` based on loop item keys (like `inp.name`), ensuring `cursor-pointer` is applied to form labels.
