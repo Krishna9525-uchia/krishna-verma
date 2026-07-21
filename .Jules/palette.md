@@ -1,0 +1,3 @@
+## 2025-02-27 - Associated Dynamically Generated Labels and Controls
+**Learning:** Dynamically generated input configurations (e.g., from a static calculator schema) can easily miss standard accessibility links between `<label>` and control element. Associating them using `htmlFor` and `id` mapped to `inp.name` coupled with `cursor-pointer` on `<label>` ensures that dynamic input forms are fully keyboard-navigable and screen-reader compliant.
+**Action:** Always map unique data keys (like schema `name` or `id`) to both `htmlFor` and `id` on form fields when generating form elements dynamically from configurations.
