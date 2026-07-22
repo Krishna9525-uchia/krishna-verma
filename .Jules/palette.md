@@ -1,0 +1,3 @@
+## 2025-03-05 - Form Field Label Accessibility
+**Learning:** Form `<label>` components should always be explicitly associated with their corresponding form controls (`<input>`, `<select>`) using `htmlFor` and `id` attributes. This ensures that screen readers correctly announce the input name when focused, and clicking on the label automatically shifts focus to the field. Adding `cursor-pointer` to the label also provides a subtle but critical micro-UX signifier that the text is an interactive element.
+**Action:** Always link labels and inputs explicitly in form components using dynamic properties (e.g., mapping properties from dynamic schema structures such as `inp.name`).
