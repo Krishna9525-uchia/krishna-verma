@@ -1,0 +1,3 @@
+## 2025-07-23 - Clipboard Interaction Polish and Accessibility
+**Learning:** Adding a "Copy to Clipboard" utility to result cards is a high-value micro-UX addition. It can be made fully accessible and keyboard discoverable by using the Tailwind `group-hover:opacity-100` and `focus:opacity-100` classes so the copy trigger only appears on hover or focus. Using unique keys per list item (`primary-${i}`, `secondary-${i}`) prevents state crosstalk across different cards.
+**Action:** Use CSS groups with hover/focus opacity toggling for secondary utility buttons to keep layouts clean while ensuring excellent keyboard navigation. Always handle clipboard errors via `.catch()` and provide 2-second visual feedback (CopyIcon to CheckIcon) and dynamic screen reader aria-labels.
