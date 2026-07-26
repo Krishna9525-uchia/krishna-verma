@@ -1,0 +1,3 @@
+## 2025-07-26 - React Entrypoint and Accessible Form Labels
+**Learning:** React applications utilizing Vite must have their script entry points explicitly referenced in `index.html`'s body to prevent blank page/rendering issues on production preview. Associating labels with inputs via `htmlFor` and `id` attributes is a high-impact, low-line-count a11y enhancement that makes clicking form fields intuitive and provides immediate screen reader and mobile tap-target accessibility.
+**Action:** Always verify that `index.html` contains the entry module `<script type="module" src="/index.tsx"></script>` and map label associations on dynamic calculator forms.
