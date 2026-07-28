@@ -1,0 +1,3 @@
+## 2026-07-28 - Form Label Accessibility and Visual Affordance
+**Learning:** Form labels lacking explicit association via `htmlFor` and `id` restrict accessibility for screen readers and limit usability by not permitting clicks on labels to activate or focus the associated fields. Adding `cursor-pointer` to form labels associated with inputs via `htmlFor` provides immediate visual feedback that the label is an interactive target.
+**Action:** Always map form labels to inputs using `htmlFor` and unique `id` values matching the input's name attribute, and include cursor pointer style on associated labels and dropdown selectors.
