@@ -1,0 +1,3 @@
+## 2025-02-18 - Associated Form Labels and Inputs for Accessibility
+**Learning:** In dynamically-generated calculator input forms, omitting the association between `<label>` and `<input>`/`<select>` elements degrades the screen-reader experience and prevents users from being able to focus on input controls by clicking their labels. Adding `htmlFor` and `id` mapping with the `cursor-pointer` class significantly enhances the interactivity and cognitive usability of forms.
+**Action:** Always associate `<label>` elements with their controls via `htmlFor` matching the control's `id`, and add interactive cursor indicators (`cursor-pointer`) on labels to establish a clear visual affordance.
