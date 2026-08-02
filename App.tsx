@@ -578,6 +578,19 @@ const CalculatorDetail: React.FC = () => {
   const [results, setResults] = useState<any[]>([]);
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  useEffect(() => {
+    if (copiedId) {
+      const t = setTimeout(() => setCopiedId(null), 2000);
+      return () => clearTimeout(t);
+    }
+  }, [copiedId]);
+  const handleCopy = (cid: string, val: any, u?: string) => {
+    navigator.clipboard.writeText(String(val) + (u || ''))
+      .then(() => setCopiedId(cid)).catch(e => console.error(e));
+  };
+  const clipIcon = <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m-6 4h6m-3-3v6" /></svg>;
+  const checkIcon = <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
 
   useEffect(() => {
     if (calculator) {
@@ -729,29 +742,45 @@ const CalculatorDetail: React.FC = () => {
              </div>
              <div className="p-6 space-y-4">
                  {/* Primary Result */}
-                 {results.filter(r => r.isPrimary).map((res, i) => (
-                   <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20">
-                      <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
-                      <div className="mt-2 flex items-baseline gap-2">
-                        <span className="text-4xl md:text-5xl font-bold tracking-tight">{res.value}</span>
-                        {res.unit && <span className="text-xl text-blue-200">{res.unit}</span>}
-                      </div>
-                      {res.details && <div className="mt-3 pt-3 border-t border-white/20 text-blue-50 text-sm">{res.details}</div>}
-                   </div>
-                 ))}
+                 {results.filter(r => r.isPrimary).map((res, i) => {
+                   const isCopied = copiedId === `primary-${i}`;
+                   return (
+                     <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20 relative flex justify-between items-start animate-fade-in">
+                        <div className="flex-1">
+                          <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
+                          <div className="mt-2 flex items-baseline gap-2">
+                            <span className="text-4xl md:text-5xl font-bold tracking-tight">{res.value}</span>
+                            {res.unit && <span className="text-xl text-blue-200">{res.unit}</span>}
+                          </div>
+                          {res.details && <div className="mt-3 pt-3 border-t border-white/20 text-blue-50 text-sm">{res.details}</div>}
+                        </div>
+                        <button onClick={() => handleCopy(`primary-${i}`, res.value, res.unit)} className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-white/50" aria-label={isCopied ? "Copied!" : "Copy result"}>
+                          {isCopied ? checkIcon : clipIcon}
+                        </button>
+                     </div>
+                   );
+                 })}
 
                  {/* Secondary Results Grid */}
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {results.filter(r => !r.isPrimary).map((res, i) => (
-                      <div key={i} className="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-100 dark:border-slate-700">
-                         <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">{res.label}</span>
-                         <div className="mt-1 flex items-baseline gap-1">
-                            <span className="text-xl font-bold text-slate-800 dark:text-slate-100">{res.value}</span>
-                            {res.unit && <span className="text-sm text-slate-500">{res.unit}</span>}
-                         </div>
-                         {res.details && <p className="text-xs text-slate-500 mt-1">{res.details}</p>}
-                      </div>
-                    ))}
+                    {results.filter(r => !r.isPrimary).map((res, i) => {
+                      const isCopied = copiedId === `${res.label}-${i}`;
+                      return (
+                        <div key={i} className="group/result group relative bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-100 dark:border-slate-700 flex justify-between items-start">
+                           <div className="flex-1">
+                             <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">{res.label}</span>
+                             <div className="mt-1 flex items-baseline gap-1">
+                                <span className="text-xl font-bold text-slate-800 dark:text-slate-100">{res.value}</span>
+                                {res.unit && <span className="text-sm text-slate-500">{res.unit}</span>}
+                             </div>
+                             {res.details && <p className="text-xs text-slate-500 mt-1">{res.details}</p>}
+                           </div>
+                           <button onClick={() => handleCopy(`${res.label}-${i}`, res.value, res.unit)} className="p-1.5 rounded-lg bg-slate-200/50 hover:bg-slate-200 dark:bg-slate-800/50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-blue-500/50" aria-label={isCopied ? "Copied!" : "Copy result"}>
+                             {isCopied ? checkIcon : clipIcon}
+                           </button>
+                        </div>
+                      );
+                    })}
                  </div>
                  
                  {/* AI Explanation Button/Section */}
