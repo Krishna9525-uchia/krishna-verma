@@ -578,6 +578,7 @@ const CalculatorDetail: React.FC = () => {
   const [results, setResults] = useState<any[]>([]);
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (calculator) {
@@ -588,9 +589,17 @@ const CalculatorDetail: React.FC = () => {
         setResults(calculator.calculate(defaults));
       } catch (e) { console.error(e); }
       setAiExplanation(null);
+      setCopiedId(null);
       window.scrollTo(0, 0);
     }
   }, [id, calculator]);
+
+  useEffect(() => {
+    if (copiedId) {
+      const t = setTimeout(() => setCopiedId(null), 2000);
+      return () => clearTimeout(t);
+    }
+  }, [copiedId]);
 
   const schema = useMemo(() => {
     if (!calculator) return null;
@@ -729,29 +738,45 @@ const CalculatorDetail: React.FC = () => {
              </div>
              <div className="p-6 space-y-4">
                  {/* Primary Result */}
-                 {results.filter(r => r.isPrimary).map((res, i) => (
-                   <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20">
-                      <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
-                      <div className="mt-2 flex items-baseline gap-2">
-                        <span className="text-4xl md:text-5xl font-bold tracking-tight">{res.value}</span>
-                        {res.unit && <span className="text-xl text-blue-200">{res.unit}</span>}
-                      </div>
-                      {res.details && <div className="mt-3 pt-3 border-t border-white/20 text-blue-50 text-sm">{res.details}</div>}
-                   </div>
-                 ))}
+                 {results.filter(r => r.isPrimary).map((res, i) => {
+                   const keyId = `primary-${i}`, isCopied = copiedId === keyId;
+                   return (
+                     <div key={i} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20 flex justify-between items-start">
+                        <div>
+                          <span className="text-blue-100 text-sm font-medium uppercase tracking-wide">{res.label}</span>
+                          <div className="mt-2 flex items-baseline gap-2">
+                            <span className="text-4xl md:text-5xl font-bold tracking-tight">{res.value}</span>
+                            {res.unit && <span className="text-xl text-blue-200">{res.unit}</span>}
+                          </div>
+                          {res.details && <div className="mt-3 pt-3 border-t border-white/20 text-blue-50 text-sm">{res.details}</div>}
+                        </div>
+                        <button onClick={() => navigator.clipboard.writeText(String(res.value) + (res.unit || '')).then(() => setCopiedId(keyId)).catch(e => console.error(e))} className="p-2 rounded-lg bg-white/10 hover:bg-white/20 active:bg-white/30 focus-visible:ring-2 focus-visible:ring-white outline-none transition-all" aria-label={isCopied ? "Copied!" : "Copy result"}>
+                          {isCopied ? <svg className="w-5 h-5 text-green-300 animate-fade-in" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg> : <svg className="w-5 h-5 text-blue-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m-2 4h5m-3-3l3 3m0 0l-3 3" /></svg>}
+                        </button>
+                     </div>
+                   );
+                 })}
 
                  {/* Secondary Results Grid */}
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {results.filter(r => !r.isPrimary).map((res, i) => (
-                      <div key={i} className="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-100 dark:border-slate-700">
-                         <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">{res.label}</span>
-                         <div className="mt-1 flex items-baseline gap-1">
-                            <span className="text-xl font-bold text-slate-800 dark:text-slate-100">{res.value}</span>
-                            {res.unit && <span className="text-sm text-slate-500">{res.unit}</span>}
-                         </div>
-                         {res.details && <p className="text-xs text-slate-500 mt-1">{res.details}</p>}
-                      </div>
-                    ))}
+                    {results.filter(r => !r.isPrimary).map((res, i) => {
+                      const keyId = `secondary-${i}`, isCopied = copiedId === keyId;
+                      return (
+                        <div key={i} className="group/result relative bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 border border-slate-100 dark:border-slate-700 flex justify-between items-start">
+                           <div>
+                             <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">{res.label}</span>
+                             <div className="mt-1 flex items-baseline gap-1">
+                                <span className="text-xl font-bold text-slate-800 dark:text-slate-100">{res.value}</span>
+                                {res.unit && <span className="text-sm text-slate-500">{res.unit}</span>}
+                             </div>
+                             {res.details && <p className="text-xs text-slate-500 mt-1">{res.details}</p>}
+                           </div>
+                           <button onClick={() => navigator.clipboard.writeText(String(res.value) + (res.unit || '')).then(() => setCopiedId(keyId)).catch(e => console.error(e))} className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 active:bg-slate-300 focus-visible:ring-2 focus-visible:ring-blue-500 outline-none md:opacity-0 group-hover/result:opacity-100 focus:opacity-100 transition-all" aria-label={isCopied ? "Copied!" : "Copy result"}>
+                             {isCopied ? <svg className="w-4 h-4 text-green-500 animate-fade-in" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg> : <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m-2 4h5m-3-3l3 3m0 0l-3 3" /></svg>}
+                           </button>
+                        </div>
+                      );
+                    })}
                  </div>
                  
                  {/* AI Explanation Button/Section */}
