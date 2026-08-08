@@ -1,0 +1,3 @@
+## 2025-08-08 - Dynamic Calculator Form Controls Lack Label Association
+**Learning:** In dynamic, schema-driven form generators, standard static HTML labels often get rendered without direct control mapping because IDs are dynamic. This leaves interactive input elements disconnected from their descriptive labels, breaking screen reader announcements and narrowing physical tap/click targets on labels.
+**Action:** Always map dynamic schema fields to a unique input ID matching the field's schema name, and use `htmlFor` on the `<label>` along with the `cursor-pointer` utility class to immediately signify an interactive focus trigger.
