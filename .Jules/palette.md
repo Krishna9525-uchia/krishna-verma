@@ -1,0 +1,3 @@
+## 2025-02-17 - Form Label Association for Enhanced Screen-Reader and Keyboard Navigation
+**Learning:** Explicitly mapping `<label>` elements to their corresponding `<input>` or `<select>` controls via the `htmlFor` and `id` attributes ensures assistive technologies (like screen readers) correctly read out the control's purpose. It also allows mouse and touch users to click/tap the label directly to focus the control, enhancing the hit-target area.
+**Action:** Always associate `<label>` elements with form inputs by mapping `htmlFor` on the label to a matching `id` on the input, and style labels with `cursor-pointer` to indicate interactivity.
