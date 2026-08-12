@@ -1,0 +1,3 @@
+## 2025-03-05 - Associating Dynamic Form Labels with Inputs
+**Learning:** In dynamically-generated form fields (such as those in calculator components mapped from input definitions), missing label-to-input association prevents screen readers from announcing input names correctly on focus and disables clickable focus-shifting. Mapping `htmlFor` on labels and matching `id` on form controls (using unique keys like `inp.name`) fully resolves these accessibility issues. Adding `cursor-pointer` to the associated labels visually signifies that the label itself is an active hit target.
+**Action:** Always map `htmlFor` and `id` to the field name in dynamically rendered lists of form controls, and apply `cursor-pointer` styling to the text label.
