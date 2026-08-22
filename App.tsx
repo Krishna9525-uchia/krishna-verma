@@ -113,6 +113,7 @@ const Header: React.FC<{ darkMode: boolean, setDarkMode: (v: boolean) => void }>
             <button 
               className="md:hidden p-2 text-slate-600 dark:text-slate-300"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Menu"
             >
               <MenuIcon />
             </button>
@@ -294,9 +295,14 @@ const HomePage: React.FC = () => {
                       className="w-full py-5 px-4 text-lg text-slate-900 dark:text-white bg-transparent border-none focus:ring-0 placeholder-slate-400"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      aria-label="Search calculators"
                     />
                     {search && (
-                      <button onClick={() => setSearch('')} className="pr-6 text-slate-400 hover:text-slate-600">
+                      <button
+                        onClick={() => setSearch('')}
+                        className="pr-6 text-slate-400 hover:text-slate-600"
+                        aria-label="Clear search"
+                      >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
                     )}
