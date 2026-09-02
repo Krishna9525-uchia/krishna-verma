@@ -1,0 +1,3 @@
+## 2026-09-02 - Form Label Association for Dynamic Calculator Controls
+**Learning:** In dynamically generated forms like `CalculatorDetail`, form `<label>` elements without `htmlFor` attributes prevent screen reader identification and disallow label click-to-focus interactions. Using `inp.name` as a mapped `id` and `htmlFor` pair, combined with `cursor-pointer`, instantly expands hit target areas for mobile/desktop users and establishes full standard accessibility.
+**Action:** Always map dynamic field configuration keys (`inp.name`) to `htmlFor` on `<label>` and `id` on form inputs/selects, adding `cursor-pointer` to labels.
