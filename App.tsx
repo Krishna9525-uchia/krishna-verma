@@ -111,8 +111,10 @@ const Header: React.FC<{ darkMode: boolean, setDarkMode: (v: boolean) => void }>
               </div>
             </button>
             <button 
-              className="md:hidden p-2 text-slate-600 dark:text-slate-300"
+              className="md:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Navigation Menu"
+              aria-expanded={mobileMenuOpen}
             >
               <MenuIcon />
             </button>
