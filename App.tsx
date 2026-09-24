@@ -318,10 +318,17 @@ const HomePage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map(c => <CalculatorCard key={c.id} calc={c} />)}
               {filtered.length === 0 && (
-                <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
+                <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 text-center px-4">
                   <div className="text-6xl mb-4">🔍</div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No results found</h3>
-                  <p className="text-slate-500 dark:text-slate-400">Try adjusting your search terms or browse categories below.</p>
+                  <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-md">Try adjusting your search terms or clear your search to browse all available calculators.</p>
+                  <button
+                    onClick={() => setSearch('')}
+                    className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 shadow-sm"
+                    aria-label="Clear search and view all calculators"
+                  >
+                    Clear search
+                  </button>
                 </div>
               )}
             </div>
