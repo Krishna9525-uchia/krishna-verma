@@ -294,9 +294,14 @@ const HomePage: React.FC = () => {
                       className="w-full py-5 px-4 text-lg text-slate-900 dark:text-white bg-transparent border-none focus:ring-0 placeholder-slate-400"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      aria-label="Search calculators"
                     />
                     {search && (
-                      <button onClick={() => setSearch('')} className="pr-6 text-slate-400 hover:text-slate-600">
+                      <button
+                        onClick={() => setSearch('')}
+                        className="mr-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg p-1"
+                        aria-label="Clear search"
+                      >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
                     )}
@@ -321,7 +326,14 @@ const HomePage: React.FC = () => {
                 <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
                   <div className="text-6xl mb-4">🔍</div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No results found</h3>
-                  <p className="text-slate-500 dark:text-slate-400">Try adjusting your search terms or browse categories below.</p>
+                  <p className="text-slate-500 dark:text-slate-400 mb-6">Try adjusting your search terms or browse categories below.</p>
+                  <button
+                    onClick={() => setSearch('')}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    aria-label="Clear search"
+                  >
+                    Clear Search
+                  </button>
                 </div>
               )}
             </div>
