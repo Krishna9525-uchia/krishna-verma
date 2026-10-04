@@ -294,9 +294,10 @@ const HomePage: React.FC = () => {
                       className="w-full py-5 px-4 text-lg text-slate-900 dark:text-white bg-transparent border-none focus:ring-0 placeholder-slate-400"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      aria-label="Search calculators"
                     />
                     {search && (
-                      <button onClick={() => setSearch('')} className="pr-6 text-slate-400 hover:text-slate-600">
+                      <button onClick={() => setSearch('')} aria-label="Clear search" className="mr-4 p-1 text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                       </button>
                     )}
@@ -322,6 +323,13 @@ const HomePage: React.FC = () => {
                   <div className="text-6xl mb-4">🔍</div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No results found</h3>
                   <p className="text-slate-500 dark:text-slate-400">Try adjusting your search terms or browse categories below.</p>
+                  <button
+                    onClick={() => setSearch('')}
+                    aria-label="Clear search"
+                    className="mt-6 px-5 py-2.5 text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  >
+                    Clear search
+                  </button>
                 </div>
               )}
             </div>
