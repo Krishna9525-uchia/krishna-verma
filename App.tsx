@@ -321,7 +321,14 @@ const HomePage: React.FC = () => {
                 <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
                   <div className="text-6xl mb-4">🔍</div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No results found</h3>
-                  <p className="text-slate-500 dark:text-slate-400">Try adjusting your search terms or browse categories below.</p>
+                  <p className="text-slate-500 dark:text-slate-400 mb-6">Try adjusting your search terms or browse categories below.</p>
+                  <button
+                    onClick={() => setSearch('')}
+                    aria-label="Clear search"
+                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800"
+                  >
+                    Clear Search
+                  </button>
                 </div>
               )}
             </div>
